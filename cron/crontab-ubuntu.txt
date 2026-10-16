@@ -5,3 +5,6 @@
 # TIA — Agenda tarefas recorrentes (45 min antes do executor)
 # 22:15 BRT = 01:15 UTC
 15 1 * * * HOME=/home/ubuntu PATH=/home/ubuntu/.nvm/versions/node/v24.15.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin python3 /IncontreIA/Prime/scripts/agenda_noturna.py >> /IncontreIA/Prime/temp/executor.log 2>&1
+
+# Versionamento semanal no GitHub (Incontre.IA + vps.infra) — domingo 04:50
+50 4 * * 0 HOME=/home/ubuntu /home/ubuntu/vps.infra/versionar_semanal.sh
