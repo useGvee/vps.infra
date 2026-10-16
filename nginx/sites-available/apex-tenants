@@ -1,0 +1,352 @@
+# CLIENTE 1: Incontre (GIDL = 1)
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name incontre.gvee.com.br;
+
+    ssl_certificate /etc/letsencrypt/live/incontre.gvee.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/incontre.gvee.com.br/privkey.pem;
+
+    # Se o cliente acessar a raiz /, manda direto para a aplicação com o GIDL:1
+    location = / {
+        return 301 https://$host/ords/f?p=110:9999:::::GIDL:1:;
+    }
+
+    # Repassa todo o tráfego do ORDS para a nuvem da Oracle
+    location /ords/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ords/;
+
+        # Headers padrão de encaminhamento
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+
+        # CORREÇÃO DO FORBIDDEN: Mascara as origens para passar na validação CSRF do APEX
+        proxy_set_header Origin https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Referer https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+
+        # Evita que o ORDS mude a URL na barra de endereço do cliente
+        proxy_redirect https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ /;
+
+        # Buffers otimizados para sessões e tokens grandes do APEX
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+    }
+
+    # Repassa os arquivos de estilo, ícones e JS do APEX
+    location /i/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}
+
+# CLIENTE 2: Vale (GIDL = 5)
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name vale.gvee.com.br;
+
+    ssl_certificate /etc/letsencrypt/live/vale.gvee.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/vale.gvee.com.br/privkey.pem;
+
+    location = / {
+        return 301 https://$host/ords/f?p=110:9999:::::GIDL:5:;
+    }
+
+    location /ords/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ords/;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header Origin https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Referer https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_redirect https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ /;
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+    }
+
+    location /i/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}
+
+# CLIENTE 3: Pituka (GIDL = 13)
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name pituka.gvee.com.br;
+
+    ssl_certificate /etc/letsencrypt/live/pituka.gvee.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/pituka.gvee.com.br/privkey.pem;
+
+    location = / {
+        return 301 https://$host/ords/f?p=110:9999:::::GIDL:13:;
+    }
+
+    location /ords/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ords/;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header Origin https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Referer https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_redirect https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ /;
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+    }
+
+    location /i/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}
+
+# CLIENTE 4: Mascarenhas (GIDL = 14)
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name mascarenhas.gvee.com.br;
+
+    ssl_certificate /etc/letsencrypt/live/mascarenhas.gvee.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mascarenhas.gvee.com.br/privkey.pem;
+
+    location = / {
+        return 301 https://$host/ords/f?p=110:9999:::::GIDL:14:;
+    }
+
+    location /ords/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ords/;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header Origin https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Referer https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_redirect https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ /;
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+    }
+
+    location /i/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}
+
+# CLIENTE 5: Guainumby (GIDL = 15)
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name guainumby.gvee.com.br;
+
+    ssl_certificate /etc/letsencrypt/live/guainumby.gvee.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/guainumby.gvee.com.br/privkey.pem;
+
+    location = / {
+        return 301 https://$host/ords/f?p=110:9999:::::GIDL:15:;
+    }
+
+    location /ords/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ords/;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header Origin https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Referer https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_redirect https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ /;
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+    }
+
+    location /i/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}
+
+# CLIENTE 6: Cones (GIDL = 16)
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name cones.gvee.com.br;
+
+    ssl_certificate /etc/letsencrypt/live/cones.gvee.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/cones.gvee.com.br/privkey.pem;
+
+    location = / {
+        return 301 https://$host/ords/f?p=110:9999:::::GIDL:16:;
+    }
+
+    location /ords/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ords/;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header Origin https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Referer https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_redirect https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ /;
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+    }
+
+    location /i/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}
+
+# CLIENTE 7: Coltex (GIDL = 17)
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name coltex.gvee.com.br;
+
+    ssl_certificate /etc/letsencrypt/live/coltex.gvee.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/coltex.gvee.com.br/privkey.pem;
+
+    location = / {
+        return 301 https://$host/ords/f?p=110:9999:::::GIDL:17:;
+    }
+
+    location /ords/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ords/;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header Origin https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Referer https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_redirect https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com/ /;
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+    }
+
+    location /i/ {
+        proxy_pass https://ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Host ga35b71c8540c5f-incontredb01.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}
+
+# CLIENTE 8: Bpmdev (GIDL = 11)
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name bpmdev.gvee.com.br;
+
+    ssl_certificate /etc/letsencrypt/live/bpmdev.gvee.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/bpmdev.gvee.com.br/privkey.pem;
+
+    location = / {
+        return 301 https://$host/ords/f?p=110:9999:::::GIDL:11:;
+    }
+
+    location /ords/ {
+        proxy_pass https://g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com/ords/;
+        proxy_set_header Host g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header Origin https://g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Referer https://g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_redirect https://g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com/ /;
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+    }
+
+    location /i/ {
+        proxy_pass https://g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Host g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}
+
+# CLIENTE 9: Valedev (GIDL = 5)
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name valedev.gvee.com.br;
+
+    ssl_certificate /etc/letsencrypt/live/valedev.gvee.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/valedev.gvee.com.br/privkey.pem;
+
+    location = / {
+        return 301 https://$host/ords/f?p=110:9999:::::GIDL:5:;
+    }
+
+    location /ords/ {
+        proxy_pass https://g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com/ords/;
+        proxy_set_header Host g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header Origin https://g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Referer https://g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_redirect https://g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com/ /;
+        proxy_buffer_size          128k;
+        proxy_buffers              4 256k;
+        proxy_busy_buffers_size    256k;
+    }
+
+    location /i/ {
+        proxy_pass https://g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header Host g1e526f921a86b3-gveedbdev.adb.sa-vinhedo-1.oraclecloudapps.com;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-Host $host;
+    }
+}

@@ -1,0 +1,2 @@
+# cópias .bak do nginx: o histórico do git já guarda as versões anteriores
+*.bak.*

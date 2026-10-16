@@ -1,0 +1,68 @@
+server {
+    server_name gvee.com.br www.gvee.com.br;
+
+    # Logs
+    access_log /var/log/nginx/gvee.access.log;
+    error_log  /var/log/nginx/gvee.error.log;
+
+    # Segurança — oculta versão do nginx
+    server_tokens off;
+
+    # Upload máximo (imagens do blog)
+    client_max_body_size 20M;
+
+    # Imagens públicas do Supabase Storage (evita mixed content em HTTPS)
+    location /storage/v1/object/public/ {
+        limit_except GET HEAD { deny all; }
+        proxy_pass         http://127.0.0.1:8000;
+        proxy_http_version 1.1;
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        expires            1h;
+    }
+
+    # Proxy para o Next.js
+    location / {
+        proxy_pass         http://localhost:3000;
+        proxy_http_version 1.1;
+
+        # Headers necessários para Next.js funcionar corretamente
+        proxy_set_header Upgrade           $http_upgrade;
+        proxy_set_header Connection        'upgrade';
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    listen [::]:443 ssl ipv6only=on default_server; # managed by Certbot
+    listen 443 ssl default_server; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/gvee.com.br/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/gvee.com.br/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+}
+server {
+    if ($host = www.gvee.com.br) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = gvee.com.br) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name gvee.com.br www.gvee.com.br;
+    return 404; # managed by Certbot
+
+
+
+
+}

@@ -1,0 +1,18 @@
+[Unit]
+Description=GVEE — Next.js (producao)
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/projects/GVEE
+Environment=NODE_ENV=production
+Environment=PATH=/home/ubuntu/.nvm/versions/node/v24.15.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/home/ubuntu/.nvm/versions/node/v24.15.0/bin/npm run start
+Restart=on-failure
+RestartSec=10
+StandardOutput=append:/IncontreIA/VPS/Temp/nextjs.log
+StandardError=append:/IncontreIA/VPS/Temp/nextjs.log
+
+[Install]
+WantedBy=multi-user.target

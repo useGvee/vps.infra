@@ -1,0 +1,28 @@
+
+# Repositório incontre.net.br no GitHub (deploy key exclusiva)
+Host github-incontre
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/incontre_deploy
+  IdentitiesOnly yes
+
+# Repositório vps.gvee.com.br no GitHub (deploy key exclusiva)
+Host github-vpsgvee
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/vpsgvee_deploy
+  IdentitiesOnly yes
+
+# Repositório Incontre.IA no GitHub (deploy key exclusiva)
+Host github-incontreia
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/incontreia_deploy
+  IdentitiesOnly yes
+
+# Repositório vps.infra no GitHub (deploy key exclusiva)
+Host github-vpsinfra
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/vpsinfra_deploy
+  IdentitiesOnly yes

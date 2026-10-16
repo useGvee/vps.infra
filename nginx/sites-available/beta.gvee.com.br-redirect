@@ -1,0 +1,10 @@
+# beta.gvee.com.br (site estático da consultoria) foi desativado em 16/10/2026:
+# conteúdo migrado para gvee.com.br/sob-medida. Arquivo em /IncontreIA/VPS/Projetos/Site_GVEE/beta-arquivo/
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name beta.gvee.com.br;
+    ssl_certificate     /etc/letsencrypt/live/gvee.com.br/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/gvee.com.br/privkey.pem;
+    return 301 https://gvee.com.br/sob-medida;
+}

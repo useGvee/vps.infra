@@ -1,0 +1,53 @@
+# incontre.net.br
+# Página institucional da Incontre. Arquivo estático único, servido direto pelo nginx.
+# NÃO interfere no gvee.com.br nem na aplicação Next.js da porta 3000.
+# Atenção: systextil.incontre.net.br (ERP Systextil) continua no servidor 177.66.145.251 — não é atendido aqui.
+# HTTPS: após o DNS apontar para este servidor, rodar
+#   sudo certbot --nginx -d incontre.net.br -d www.incontre.net.br
+
+server {
+    server_name incontre.net.br www.incontre.net.br;
+
+    root /var/www/incontre.net.br;
+    index index.html;
+
+    access_log /var/log/nginx/incontre.access.log;
+    error_log  /var/log/nginx/incontre.error.log;
+
+    server_tokens off;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    listen [::]:443 ssl; # managed by Certbot
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/incontre.net.br/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/incontre.net.br/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+}
+
+
+server {
+    if ($host = www.incontre.net.br) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    if ($host = incontre.net.br) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    listen [::]:80;
+    server_name incontre.net.br www.incontre.net.br;
+    return 404; # managed by Certbot
+
+
+
+
+}

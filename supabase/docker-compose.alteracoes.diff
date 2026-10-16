@@ -1,0 +1,22 @@
+diff --git a/docker/docker-compose.yml b/docker/docker-compose.yml
+index f4c2a510..1090ce48 100644
+--- a/docker/docker-compose.yml
++++ b/docker/docker-compose.yml
+@@ -184,6 +184,8 @@ services:
+       GOTRUE_MAILER_URLPATHS_CONFIRMATION: ${MAILER_URLPATHS_CONFIRMATION}
+       GOTRUE_MAILER_URLPATHS_RECOVERY: ${MAILER_URLPATHS_RECOVERY}
+       GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: ${MAILER_URLPATHS_EMAIL_CHANGE}
++      GOTRUE_MAILER_TEMPLATES_RECOVERY: http://167.126.26.220:3000/email-templates/recovery.html
++      GOTRUE_MAILER_TEMPLATES_INVITE: http://167.126.26.220:3000/email-templates/invite.html
+ 
+       GOTRUE_EXTERNAL_PHONE_ENABLED: ${ENABLE_PHONE_SIGNUP}
+       GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
+@@ -516,6 +518,8 @@ services:
+   db:
+     container_name: supabase-db
+     image: supabase/postgres:15.8.1.085
++    ports:
++      - "54333:5432"      
+     restart: unless-stopped
+     volumes:
+       - ./volumes/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z

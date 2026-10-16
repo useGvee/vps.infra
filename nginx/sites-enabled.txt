@@ -1,0 +1,5 @@
+apex-tenants -> /etc/nginx/sites-available/apex-tenants
+beta.gvee.com.br-redirect -> /etc/nginx/sites-available/beta.gvee.com.br-redirect
+gvee.com.br -> /etc/nginx/sites-available/gvee.com.br
+incontre.net.br -> /etc/nginx/sites-available/incontre.net.br
+nip-io -> (arquivo próprio, em sites-enabled/)
