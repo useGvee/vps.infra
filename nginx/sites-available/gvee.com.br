@@ -5,6 +5,11 @@ server {
     access_log /var/log/nginx/gvee.access.log;
     error_log  /var/log/nginx/gvee.error.log;
 
+    # www -> domínio principal (19/10/2026)
+    if ($host = www.gvee.com.br) {
+        return 301 https://gvee.com.br$request_uri;
+    }
+
     # Segurança — oculta versão do nginx
     server_tokens off;
 
@@ -48,7 +53,7 @@ server {
 }
 server {
     if ($host = www.gvee.com.br) {
-        return 301 https://$host$request_uri;
+        return 301 https://gvee.com.br$request_uri;
     } # managed by Certbot
 
 
